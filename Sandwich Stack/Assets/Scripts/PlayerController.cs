@@ -6,27 +6,28 @@ public class PlayerController : MonoBehaviour
 {
     public float speed;
 
+    private Vector3 forward, right;
+    
     // Start is called before the first frame update
     void Start()
     {
-        
+        forward = Camera.main.transform.forward;
+        forward.y = 0;
+        forward = Vector3.Normalize(forward);
+        right = Quaternion.Euler(new Vector3(0, 90, 0)) * forward;
     }
 
     // Update is called once per frame
     void Update()
     {
-        float horizontalInput = Input.GetAxis("Horizontal");
-        float verticalInput = Input.GetAxis("Vertical");
+        //Vector3 direction = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+        Vector3 rightMovement = right * speed * Time.deltaTime * Input.GetAxis("Horizontal");
+        Vector3 upMovement = forward * speed * Time.deltaTime * Input.GetAxis("Vertical");
 
-        Vector3 verticalMovement = new Vector3(verticalInput * speed, 0.0f, verticalInput * speed);
-        Vector3 horizontalMovement = new Vector3(horizontalInput * speed, 0.0f, -horizontalInput * speed);
-
-        float x = Mathf.Clamp(verticalMovement.x + horizontalMovement.x, -1.0f, 1.0f);
-        float z = Mathf.Clamp(verticalMovement.z + horizontalMovement.z, -1.0f, 1.0f);
-        Vector3 movement = new Vector3(x * speed, 0.0f, z * speed);
-
-        movement.y = GetComponent<Rigidbody>().velocity.y;
-
-        GetComponent<Rigidbody>().velocity = movement;
+        //Vector3 heading = Vector3.Normalize(rightMovement + upMovement); 
+        //transform.forward = heading; // change direction of object to face movement direction
+        
+        transform.position += rightMovement;
+        transform.position += upMovement;
     }
 }
